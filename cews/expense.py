@@ -23,22 +23,22 @@ class Expense:
 
 
 def validate_expense_input(expense: Expense) -> None:
-    """TRACE: REQ-01
-    Validate expense input fields for correctness.
-    Raises ValueError if input data is invalid.
+    """TRACE: REQ-01, REQ-02
+    Validate expense input fields for correctness per Section 18.
+    Raises ValueError if input data is invalid (missing IDs, invalid amount, negative budget, unsupported type).
     """
     if not expense.request_id or not isinstance(expense.request_id, str) or not expense.request_id.strip():
-        raise ValueError("Invalid or missing request_id")
+        raise ValueError("Missing or invalid request ID")
     if not expense.employee_id or not isinstance(expense.employee_id, str) or not expense.employee_id.strip():
-        raise ValueError("Invalid or missing employee_id")
+        raise ValueError("Missing or invalid employee ID")
     if not expense.department or not isinstance(expense.department, str) or not expense.department.strip():
-        raise ValueError("Invalid or missing department")
+        raise ValueError("Missing or invalid department")
     if not expense.expense_type or not isinstance(expense.expense_type, str) or expense.expense_type.lower() not in ALLOWED_EXPENSE_TYPES:
-        raise ValueError(f"Unsupported or missing expense_type: {expense.expense_type}")
+        raise ValueError(f"Unsupported expense type: '{expense.expense_type}'")
     if not isinstance(expense.amount, (int, float)) or expense.amount <= 0:
-        raise ValueError(f"Invalid amount: {expense.amount}")
+        raise ValueError(f"Invalid expense amount: {expense.amount}")
     if not isinstance(expense.budget, (int, float)) or expense.budget < 0:
-        raise ValueError(f"Negative or invalid budget: {expense.budget}")
+        raise ValueError(f"Negative budget: {expense.budget}")
 
 
 def submit_expense(expense: Expense) -> Expense:
