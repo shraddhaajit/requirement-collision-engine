@@ -10,6 +10,7 @@ from cews.approval import (
     check_finance_approval,
     check_executive_approval,
 )
+from cews.compliance import check_hr_compliance
 
 
 import sys
@@ -36,10 +37,28 @@ def print_scenario_output(scenario_num: int, title: str, exp: Expense) -> None:
     # Process workflow
     processed = submit_expense(exp)
     
+    # Audit log actions recorded on processed expense
+    actions = [log["action"] for log in processed.audit_log]
+
     # Evaluate rule indicators
     budget_pass = "PASS" if validate_budget(processed) else "FAIL"
-    mgr_req = "YES (Threshold > Rs. 10,000)" if check_manager_approval(processed) else "NOT REQUIRED"
-    hr_req = "REQUIRED" if processed.expense_type.lower() == "travel" else "NOT REQUIRED"
+
+    # Derive Manager Approval status from actual audit log actions
+    if any("BYPASS_MANAGER_EMERGENCY" in a for a in actions):
+        mgr_req = "BYPASSED (emergency, REQ-08)"
+    elif any("OVERRIDE_MANAGER_TRAVEL" in a for a in actions):
+        mgr_req = "OVERRIDDEN (REQ-07)"
+    elif any("APPROVED_MANAGER" in a for a in actions):
+        mgr_req = "APPROVED (standard)"
+    else:
+        mgr_req = "NOT REQUIRED"
+
+    # Derive HR Compliance status via check_hr_compliance() call
+    if check_hr_compliance(processed):
+        hr_req = "COMPLIANT (REQ-04)" if processed.expense_type.lower() == "travel" else "NOT REQUIRED"
+    else:
+        hr_req = "NON-COMPLIANT"
+
     fin_req = "REQUIRED (> Rs. 25,000)" if check_finance_approval(processed) else "NOT REQUIRED"
     exec_req = "REQUIRED (> Rs. 50,000)" if check_executive_approval(processed) else "NOT REQUIRED"
 
