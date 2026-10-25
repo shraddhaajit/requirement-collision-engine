@@ -156,24 +156,63 @@ def test_freight_rate():
 
 ## 6. Installation & Environment Setup
 
-RCE is built purely with Python 3.10+ standard libraries and `networkx` for graph analysis. It does **not** require Node.js, external databases, or LLM API keys.
+RCE is built purely using Python 3.10+ standard libraries and `networkx` for graph analysis. It is completely self-contained and does **not** require external databases, Node.js runtimes, or third-party cloud services.
 
-### 6.1 Setup on Windows PowerShell
+### 6.1 Step-by-Step Setup Instructions
 
+#### On Windows (PowerShell):
 ```powershell
-# 1. Clone repository
+# 1. Clone the repository
 git clone https://github.com/shraddhaajit/requirement-collision-engine.git
 cd "requirement-collision-engine"
 
-# 2. Create and activate virtual environment
+# 2. Create and activate a Python virtual environment
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 
-# 3. Install dependencies
+# 3. Upgrade pip and install project dependencies
+pip install --upgrade pip
 pip install -r requirements.txt
 ```
 
-### 6.2 Dependencies (`requirements.txt`)
+#### On Linux / macOS (Bash / Zsh):
+```bash
+# 1. Clone the repository
+git clone https://github.com/shraddhaajit/requirement-collision-engine.git
+cd requirement-collision-engine
+
+# 2. Create and activate a Python virtual environment
+python3 -m venv .venv
+source .venv/bin/activate
+
+# 3. Upgrade pip and install project dependencies
+pip install --upgrade pip
+pip install -r requirements.txt
+```
+
+### 6.2 Environment Variable Setup (Without Sensitive Keys)
+
+The project operates under a deterministic, closed-world static analysis architecture. **No sensitive secrets, API keys, passwords, or authentication tokens are required.**
+
+All environment configurations are completely safe, optional, and non-sensitive. An environment template file [`.env.example`](file:///c:/Users/shrad/OneDrive/Desktop/sw%20theory%20project/.env.example) is provided in the repository root:
+
+```bash
+# Copy the environment template (optional)
+cp .env.example .env     # Linux / macOS
+copy .env.example .env   # Windows Command Prompt / PowerShell
+```
+
+#### Supported Configuration Variables:
+
+| Variable Name | Default Value | Description / Scope | Sensitive? |
+|---|---|---|:---:|
+| `RCE_ENV` | `development` | Runtime environment mode (`development`, `testing`, `ci`) | **No** |
+| `RCE_LOG_LEVEL` | `INFO` | Console logging verbosity (`DEBUG`, `INFO`, `WARNING`, `ERROR`) | **No** |
+| `PYTHONPATH` | `.` | Module resolution root directory | **No** |
+| `RCE_DEFAULT_MAX_DEPTH` | `3` | Default BFS graph traversal depth for change-impact analysis | **No** |
+| `RCE_OUTPUT_DIR` | `./reports` | Target directory for generated JSON/text reports | **No** |
+
+### 6.3 Core Dependencies (`requirements.txt`)
 ```text
 pytest>=7.0.0
 networkx>=3.0
@@ -181,52 +220,71 @@ networkx>=3.0
 
 ---
 
-## 7. Command-Line Interface (CLI) Usage
+## 7. How to Run the Project Locally
 
-The CLI can be invoked using `rce` (if installed) or directly via `python -m rce.cli`.
+The repository contains two operational components:
+1. **The Reference Target System (`cews`)**: The Controlled Enterprise Expense Workflow System with 10 business requirements and 5 demonstration scenarios.
+2. **The Requirement Collision Engine (`rce`)**: The static analysis and change-impact engine.
 
-### 7.1 Basic Analysis (Human-Readable Text)
-Run default analysis on the repository:
+### 7.1 Running the Reference Application (CEWS Demonstration)
+Execute the 5 predefined faculty demonstration scenarios per DA1 specification:
+
+```powershell
+python main.py
+```
+
+This runs:
+* **Scenario 1**: Normal expense submission within limits (auto-approval).
+* **Scenario 2**: ₹12,000 Travel Expense evaluating Manager Travel Override (REQ-07) and HR compliance (REQ-04).
+* **Scenario 3**: Emergency Expense evaluating Manager Approval bypass (REQ-08) with mandatory budget validation.
+* **Scenario 4**: ₹60,000 High-Value Travel evaluating multi-tiered escalation (Manager, HR, Finance, Executive).
+* **Scenario 5**: Budget Failure correctly rejecting an expense exceeding departmental budget.
+
+### 7.2 Running RCE Static Collision Detection
+Run default static collision detection across the project workspace:
+
 ```powershell
 python -m rce.cli
 ```
 
-Analyze with specific source directories and requirements file:
+Analyze specific source directories and requirements files:
 ```powershell
 python -m rce.cli --project-root . --requirements requirements/requirements.md --source-dirs cews
 ```
 
-### 7.2 Change-Impact Analysis
-Perform change-impact analysis starting from a requirement ID, function name, module, or collision ID:
+### 7.3 Running Change-Impact Analysis
+Trace direct (Hop 1) and transitive (Hop 2+) impacts when modifying a requirement, function, or collision finding:
+
 ```powershell
-# Impact of requirement REQ-07
+# Analyze impact of modifying Requirement REQ-07 (Manager Travel Override)
 python -m rce.cli --impact REQ-07
 
-# Impact starting from a specific function
+# Analyze impact of modifying a specific function
 python -m rce.cli --impact cews.approval:manager_override
 
-# Impact starting from a collision finding
+# Analyze impact from a specific collision ID up to 4 hops
 python -m rce.cli --impact COL-RULE_B-REQ-03-REQ-07-AMOUNT --max-depth 4
 ```
 
-### 7.3 Machine-Readable JSON Output
-Emit JSON directly to stdout for CI/CD scripting:
-```powershell
-python -m rce.cli --format json
-```
+### 7.4 Running CI/CD Strict Quality Gates
+To enforce automated quality gates in pull requests, pass `--strict`. RCE exits with code `2` if any collisions are detected:
 
-Save JSON report to an output file:
-```powershell
-python -m rce.cli --format json --output report.json
-```
-
-### 7.4 Strict Mode for CI/CD Quality Gates
-Return exit code `2` if any potential collisions are detected (ideal for pull request checks):
 ```powershell
 python -m rce.cli --strict
 ```
 
-### 7.5 CLI Options Reference
+### 7.5 Exporting Machine-Readable Reports (JSON)
+Export analysis results directly to stdout or save to a file for external dashboards:
+
+```powershell
+# Stream JSON to stdout
+python -m rce.cli --format json
+
+# Export to a structured JSON file
+python -m rce.cli --format json --output report.json
+```
+
+### 7.6 CLI Command-Line Options Reference
 ```text
 options:
   -h, --help            Show help message and exit
@@ -349,3 +407,27 @@ The entire test suite can be run using `pytest`:
 * [ ] Git-history mining to correlate requirement collisions with commit authoring patterns.
 * [ ] Interactive web visualization dashboard (e.g., Pyvis / HTML graph rendering).
 * [ ] Large-scale empirical benchmarking against open-source enterprise Python repositories.
+
+---
+
+## 13. Demonstration Video Walkthrough (Compulsory)
+
+A comprehensive audio-narrated video demonstrating the live execution, architecture, and features of the **Requirement Collision Engine (RCE)** is provided below.
+
+> **Video Link**: [Click to Watch Live Demonstration Video](https://drive.google.com/file/d/your-demo-video-link-here/view) *(Ensure link permission is set to "Anyone with the link can view")*  
+> **Duration**: ~06:00 minutes (Maximum allowable: 10 minutes)  
+> **Format**: HD Screen Recording with Audio Narration demonstrating a full working walkthrough of core features.
+
+### Video Demonstration Agenda & Timestamp Breakdown
+
+| Timestamp | Demo Phase | Commands Executed | Key Concepts Demonstrated |
+|---|---|---|---|
+| **0:00 – 0:45** | **1. Motivation & Problem Statement** | — | Why unit tests miss requirement collisions; introducing AST-based deterministic collision detection. |
+| **0:45 – 1:45** | **2. Target Application (CEWS)** | `python main.py`<br/>`pytest -v tests/test_cews.py` | 5 expense approval scenarios; proving all 24 baseline tests pass green despite latent rule collisions. |
+| **1:45 – 3:15** | **3. Static Collision Detection** | `python -m rce.cli` | Markdown requirement parsing, AST extraction, 213-node knowledge graph, and detection of Rules B & C. |
+| **3:15 – 4:30** | **4. Change-Impact Analysis** | `python -m rce.cli --impact REQ-07` | BFS multi-hop traversal (Hop 1 direct, Hop 2+ transitive), impact path tracing, and smart regression pruning. |
+| **4:30 – 5:15** | **5. CI/CD & JSON Export** | `python -m rce.cli --strict`<br/>`python -m rce.cli --format json` | Non-zero exit code quality gate enforcement (exit code 2) and machine-readable JSON reports. |
+| **5:15 – 6:00** | **6. Full Test Suite & Conclusion** | `pytest -q` | All 125 tests passing in under 4 seconds with zero regressions across 10 test modules; closing summary. |
+
+---
+
