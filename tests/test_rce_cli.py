@@ -148,3 +148,25 @@ def test_cli_module_execution_subprocess():
 
     assert proc.returncode == 0
     assert "Requirement Collision Engine (RCE) v" in proc.stdout
+
+
+def test_cli_strict_mode_returns_exit_code_2_on_collisions(capsys):
+    """Verify that --strict flag causes CLI to return exit code 2 when collisions exist."""
+    exit_code = main(["--project-root", ".", "--strict", "--format", "json"])
+    captured = capsys.readouterr()
+
+    # Exit code must be 2 for CI/CD failure
+    assert exit_code == 2
+    data = json.loads(captured.out)
+    assert len(data["findings"]) >= 3
+
+
+def test_cli_strict_mode_returns_exit_code_0_when_no_collisions(tmp_path: Path, capsys):
+    """Verify that --strict flag returns 0 when no collisions exist."""
+    req_file = tmp_path / "req.md"
+    req_file.write_text("# Clean\n\n### REQ-01 — Simple\nSimple rule.\n", encoding="utf-8")
+    (tmp_path / "app.py").write_text('"""App.\n\nTRACE: REQ-01\n"""\ndef f(): pass\n', encoding="utf-8")
+
+    exit_code = main(["--project-root", str(tmp_path), "--requirements", str(req_file), "--strict"])
+    assert exit_code == 0
+

@@ -21,7 +21,7 @@
 | **Phase 4** | `3:00 – 4:00` | 60 sec | Graph-Based Change-Impact Analysis & Regression Pruning |
 | **Phase 5** | `4:00 – 4:45` | 45 sec | Generalization Across Independent Domains (Logistics & Inventory) |
 | **Phase 6** | `4:45 – 5:25` | 40 sec | CI/CD Strict Quality Gates & Machine-Readable JSON Export |
-| **Phase 7** | `5:25 – 6:00` | 35 sec | Full 125-Test Suite Execution & Conclusion |
+| **Phase 7** | `5:25 – 6:00` | 35 sec | Full 127-Test Suite Execution & Conclusion |
 
 ---
 
@@ -157,7 +157,7 @@ cls
 ```
 
 #### 🗣️ Spoken Voiceover (Read Word-for-Word):
-> *"Finally, we run our comprehensive test suite. In less than three seconds, all **one hundred and twenty-five automated tests** pass across ten test modules with zero failures and zero regressions.*
+> *"Finally, we run our comprehensive test suite. In less than three seconds, all **one hundred and twenty-seven automated tests** pass across ten test modules with zero failures and zero regressions.*
 >
 > *In summary, the Requirement Collision Engine bridges the critical gap between written requirements and Abstract Syntax Tree code implementation. It transforms silent, expensive production conflicts into deterministic, pre-commit engineering insights.*
 >

@@ -128,6 +128,13 @@ def build_parser() -> argparse.ArgumentParser:
     )
 
     parser.add_argument(
+        "--strict",
+        action="store_true",
+        default=False,
+        help="Strict CI/CD mode: Exit with code 2 if any potential collisions are detected, 1 on error, 0 if collision-free.",
+    )
+
+    parser.add_argument(
         "--version",
         "-v",
         action="version",
@@ -192,6 +199,9 @@ def main(argv: Optional[List[str]] = None) -> int:
     # 5. Return appropriate exit code
     if result.status == STATUS_FAILED or not result.success:
         return 1
+
+    if args.strict and result.collisions_count > 0:
+        return 2
 
     return 0
 

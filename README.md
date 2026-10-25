@@ -381,10 +381,10 @@ The entire test suite can be run using `pytest`:
 | [`tests/test_rce_knowledge_graph.py`](file:///c:/Users/shrad/OneDrive/Desktop/sw%20theory%20project/tests/test_rce_knowledge_graph.py) | **11** | NetworkX node/edge creation, bipartite traceability links |
 | [`tests/test_rce_collision_detector.py`](file:///c:/Users/shrad/OneDrive/Desktop/sw%20theory%20project/tests/test_rce_collision_detector.py) | **13** | Rules A, B, C detection, boundary overlaps, duplicate suppression |
 | [`tests/test_rce_impact_analyzer.py`](file:///c:/Users/shrad/OneDrive/Desktop/sw%20theory%20project/tests/test_rce_impact_analyzer.py) | **15** | Direct vs. transitive impact classification, regression test discovery |
-| [`tests/test_rce_cli.py`](file:///c:/Users/shrad/OneDrive/Desktop/sw%20theory%20project/tests/test_rce_cli.py) | **8** | CLI options, arguments, exit codes, text/JSON streaming |
+| [`tests/test_rce_cli.py`](file:///c:/Users/shrad/OneDrive/Desktop/sw%20theory%20project/tests/test_rce_cli.py) | **10** | CLI options, arguments, exit codes, strict CI/CD gate, streaming |
 | [`tests/test_rce_engine.py`](file:///c:/Users/shrad/OneDrive/Desktop/sw%20theory%20project/tests/test_rce_engine.py) | **10** | End-to-end orchestration, syntax error tolerance, partial analysis |
 | [`tests/test_rce_validation_projects.py`](file:///c:/Users/shrad/OneDrive/Desktop/sw%20theory%20project/tests/test_rce_validation_projects.py) | **6** | Domain Project A (Logistics), Project B (Inventory), discovery audit |
-| **Total Passed Tests** | **125** | **Zero failures, zero regressions** |
+| **Total Passed Tests** | **127** | **Zero failures, zero regressions** |
 
 ---
 
