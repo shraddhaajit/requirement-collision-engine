@@ -1,0 +1,109 @@
+{
+  "project_root": "C:\\Users\\shrad\\OneDrive\\Desktop\\sw theory project",
+  "success": true,
+  "status": "complete",
+  "requirements_file": "C:\\Users\\shrad\\OneDrive\\Desktop\\sw theory project\\requirements\\requirements.md",
+  "statistics": {
+    "requirements_count": 10,
+    "modules_count": 6,
+    "functions_count": 13,
+    "classes_count": 1,
+    "conditions_count": 53,
+    "graph_nodes_count": 213,
+    "graph_edges_count": 199,
+    "collisions_count": 3
+  },
+  "findings": [
+    {
+      "collision_id": "COL-RULE_B-REQ-03-REQ-07-AMOUNT",
+      "requirement_ids": [
+        "REQ-03",
+        "REQ-07"
+      ],
+      "category": "BOUNDARY_CONDITION_COLLISION",
+      "severity": "MEDIUM",
+      "confidence": "HIGH",
+      "explanation": "Boundary interval overlap on variable 'amount' between 10,000.00 and 15,000.00. Conditions 'expense.amount > 10000.0' (REQ-03) and 'expense.amount < 15000.0' (REQ-07) simultaneously evaluate to true in this range.",
+      "evidence": [
+        "Condition 1 in cews/approval.py:20 (check_manager_approval): 'expense.amount > 10000.0'",
+        "Condition 2 in cews/approval.py:43 (manager_override): 'expense.amount < 15000.0'",
+        "Target attribute: 'amount'"
+      ],
+      "related_functions": [
+        "check_manager_approval",
+        "manager_override"
+      ],
+      "source_files": [
+        "cews/approval.py"
+      ],
+      "line_numbers": [
+        20,
+        43
+      ],
+      "detection_rule": "Rule B \u2014 Conflicting conditions",
+      "requires_human_review": true
+    },
+    {
+      "collision_id": "COL-RULE_C-REQ-03-REQ-07",
+      "requirement_ids": [
+        "REQ-03",
+        "REQ-07"
+      ],
+      "category": "OVERRIDE_BYPASS_INTERACTION",
+      "severity": "HIGH",
+      "confidence": "HIGH",
+      "explanation": "Requirement REQ-07 ('Manager Travel Override') specifies bypass of 'Manager Approval' (REQ-03). Implementation gate 'final_approval' evaluates override condition 'not (manager_passed or is_override or is_emergency)', altering the standard enforcement flow of REQ-03.",
+      "evidence": [
+        "Requirement REQ-07 specifies override/bypass semantics: keyword 'override'",
+        "Requirement excerpt: 'A manager can approve a travel expense below **\u20b915,000** without the normal manager approval stage.'",
+        "Decision gate in cews/approval.py:87 (final_approval): 'not (manager_passed or is_override or is_emergency)'",
+        "Mandatory boundary constraint noted in REQ-07: explicitly preserves REQ-04, REQ-09."
+      ],
+      "related_functions": [
+        "final_approval"
+      ],
+      "source_files": [
+        "cews/approval.py"
+      ],
+      "line_numbers": [
+        87
+      ],
+      "detection_rule": "Rule C \u2014 Explicit exception or override interactions",
+      "requires_human_review": true
+    },
+    {
+      "collision_id": "COL-RULE_C-REQ-03-REQ-08",
+      "requirement_ids": [
+        "REQ-03",
+        "REQ-08"
+      ],
+      "category": "OVERRIDE_BYPASS_INTERACTION",
+      "severity": "HIGH",
+      "confidence": "HIGH",
+      "explanation": "Requirement REQ-08 ('Emergency Expense') specifies bypass of 'Manager Approval' (REQ-03). Implementation gate 'final_approval' evaluates override condition 'not (manager_passed or is_override or is_emergency)', altering the standard enforcement flow of REQ-03.",
+      "evidence": [
+        "Requirement REQ-08 specifies override/bypass semantics: keyword 'bypass'",
+        "Requirement excerpt: 'An expense marked as emergency may bypass manager approval.'",
+        "Decision gate in cews/approval.py:87 (final_approval): 'not (manager_passed or is_override or is_emergency)'",
+        "Mandatory boundary constraint noted in REQ-08: explicitly preserves REQ-02, REQ-09."
+      ],
+      "related_functions": [
+        "final_approval"
+      ],
+      "source_files": [
+        "cews/approval.py"
+      ],
+      "line_numbers": [
+        87
+      ],
+      "detection_rule": "Rule C \u2014 Explicit exception or override interactions",
+      "requires_human_review": true
+    }
+  ],
+  "impact_report": null,
+  "warnings": [],
+  "errors": [],
+  "metadata": {
+    "syntax_error_count": 0
+  }
+}

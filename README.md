@@ -416,7 +416,8 @@ A comprehensive audio-narrated video demonstrating the live execution, architect
 
 > **Video Link**: [Click to Watch Live Demonstration Video](https://drive.google.com/file/d/your-demo-video-link-here/view) *(Ensure link permission is set to "Anyone with the link can view")*  
 > **Duration**: ~06:00 minutes (Maximum allowable: 10 minutes)  
-> **Format**: HD Screen Recording with Audio Narration demonstrating a full working walkthrough of core features.
+> **Format**: HD Screen Recording with Audio Narration demonstrating a full working walkthrough of core features.  
+> **Narration Script**: The complete word-for-word spoken script and terminal cue sheet is available at [`docs/demo_video_script.md`](docs/demo_video_script.md).
 
 ### Video Demonstration Agenda & Timestamp Breakdown
 
